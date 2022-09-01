@@ -17,7 +17,7 @@ import time
 import paho.mqtt.client as paho
 from paho import mqtt
 
-def mqtt(turn=0):
+def Mqtt(turn="0"):
     # setting callbacks for different events to see if it works, print the message etc.
     def on_connect(client, userdata, flags, rc, properties=None):
         print("CONNACK received with code %s." % rc)
@@ -69,4 +69,4 @@ def mqtt(turn=0):
         client.publish("motor/turn", turn, qos=1)
 
 if __name__ == '__main__':
-    mqtt()
+    Mqtt()

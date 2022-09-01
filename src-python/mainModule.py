@@ -1,6 +1,6 @@
 from LaneModule import getLaneCurve
 import WebcamModule
-from MqttModule import mqtt
+from MqttModule import Mqtt
  
 ##################################################
 # motor = Motor(2,3,4,17,22,27)
@@ -22,7 +22,7 @@ def main():
         if curveVal>-0.08: curveVal=0
     # motor.move(0.20,-curveVal*sen,0.05)
     # cv2.waitKey(1)
-    # mqtt(-curveVal*sen)
+    Mqtt(str(-curveVal*sen))
  
 if __name__ == '__main__':
     main()
