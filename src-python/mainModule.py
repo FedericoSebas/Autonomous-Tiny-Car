@@ -1,12 +1,11 @@
 from LaneModule import getLaneCurve
 import WebcamModule
-from MqttModule import Mqtt
- 
+
 ##################################################
-# motor = Motor(2,3,4,17,22,27)
+# This will be sent to a MCU
 ##################################################
- 
-def main():
+
+def getTurn():
     img = WebcamModule.getImg()
     curveVal= getLaneCurve(img,1)
 
@@ -20,9 +19,5 @@ def main():
         if curveVal<0.05: curveVal=0
     else:
         if curveVal>-0.08: curveVal=0
-    # motor.move(0.20,-curveVal*sen,0.05)
-    # cv2.waitKey(1)
-    Mqtt(str(-curveVal*sen))
- 
-if __name__ == '__main__':
-    main()
+    return -curveVal*sen
+    
