@@ -21,19 +21,25 @@ def warpImg(img,points,w,h,inv = False):
 def nothing(a):
     pass
  
-def initializeTrackbars(intialTracbarVals,wT=720, hT=1280):
+def initializeTrackbars(initialTracbarVals = [102, 80, 20, 214 ],wT=720, hT=1280):
+    initialTracbarVals = [102, 80, 20, 214 ]
     cv2.namedWindow("Trackbars")
     cv2.resizeWindow("Trackbars", 360, 240)
-    cv2.createTrackbar("Width Top","Trackbars", intialTracbarVals[0],wT//2,nothing)
-    cv2.createTrackbar("Height Top","Trackbars", intialTracbarVals[1], hT,nothing)
-    cv2.createTrackbar("Width Bottom","Trackbars", intialTracbarVals[2],wT//2,nothing)
-    cv2.createTrackbar("Height Bottom","Trackbars", intialTracbarVals[3], hT,nothing)
+    cv2.createTrackbar("Width Top","Trackbars", initialTracbarVals[0],wT//2,nothing)
+    cv2.createTrackbar("Height Top","Trackbars", initialTracbarVals[1], hT,nothing)
+    cv2.createTrackbar("Width Bottom","Trackbars", initialTracbarVals[2],wT//2,nothing)
+    cv2.createTrackbar("Height Bottom","Trackbars", initialTracbarVals[3], hT,nothing)
+
  
-def valTrackbars(wT=720, hT=1280):
-    widthTop = cv2.getTrackbarPos("Width Top","Trackbars")
-    heightTop = cv2.getTrackbarPos("Height Top","Trackbars")
-    widthBottom = cv2.getTrackbarPos("Width Bottom","Trackbars")
-    heightBottom = cv2.getTrackbarPos("Height Bottom","Trackbars")
+def valTrackbars(initialTracbarVals=[],wT=720, hT=1280):
+        #widthTop = cv2.getTrackbarPos("Width Top","Trackbars")
+        #heightTop = cv2.getTrackbarPos("Height Top","Trackbars")
+        #widthBottom = cv2.getTrackbarPos("Width Bottom","Trackbars")
+        #heightBottom = cv2.getTrackbarPos("Height Bottom","Trackbars")
+    widthTop = initialTracbarVals[0]
+    heightTop = initialTracbarVals[1]
+    widthBottom = initialTracbarVals[2]
+    heightBottom = initialTracbarVals[3]
     points = np.float32([(widthTop, heightTop), (wT-widthTop, heightTop),
                       (widthBottom , heightBottom ), (wT-widthBottom, heightBottom)])
     return points
