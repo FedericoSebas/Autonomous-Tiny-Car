@@ -11,10 +11,10 @@ def getLaneCurve(img,display=2):
     imgResult = img.copy()
     #### STEP 1
     imgThres = utlis.thresholding(img)
- 
     #### STEP 2
     hT, wT, c = img.shape
-    points = utlis.valTrackbars()
+    intialTrackBarVals = [102, 80, 20, 214 ]
+    points = utlis.valTrackbars(intialTrackBarVals)
     imgWarp = utlis.warpImg(imgThres,points,wT,hT)
     imgWarpPoints = utlis.drawPoints(imgCopy,points)
  
@@ -63,20 +63,20 @@ def getLaneCurve(img,display=2):
     return curve
  
  
-if __name__ == '__main__':
-    cap = cv2.VideoCapture('http://192.168.0.111:9003/video')
-    intialTrackBarVals = [102, 80, 20, 214 ]
-    utlis.initializeTrackbars(intialTrackBarVals)
-    frameCounter = 0
-    while True:
-        frameCounter += 1
-        if cap.get(cv2.CAP_PROP_FRAME_COUNT) == frameCounter:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            frameCounter = 0
+#if __name__ == '__main__':
+ #   cap = cv2.VideoCapture('http://192.168.0.111:9003/video')
+#    intialTrackBarVals = [102, 80, 20, 214 ]
+ #   utlis.initializeTrackbars(intialTrackBarVals)
+  #  frameCounter = 0
+    #while True:
+        #frameCounter += 1
+        #if cap.get(cv2.CAP_PROP_FRAME_COUNT) == frameCounter:
+            #cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            #frameCounter = 0
  
-        success, img = cap.read()
-        img = cv2.resize(img,(480,240))
-        curve = getLaneCurve(img,display=2)
-        print(curve)
+        #success, img = cap.read()
+        #img = cv2.resize(img,(480,240))
+        #curve = getLaneCurve(img,display=2)
+        #print(curve)
         #cv2.imshow('Vid',img)
-        cv2.waitKey(1)
+        #cv2.waitKey(1)
