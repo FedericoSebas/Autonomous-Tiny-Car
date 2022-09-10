@@ -1,12 +1,11 @@
 import random
 import time
-from WebcamModule import getTurn
 from paho.mqtt import client as mqtt_client
 
 
 broker = 'ip'
-port = port
-topic = "motor/turn"
+port = 1883
+topic = "motor/data/turn"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 #username = 'CERTERO-motor'
@@ -27,26 +26,18 @@ def connect_mqtt():
     return client
 
 
-def publish(client):
-    while True:
-        time.sleep(0.0001)
-        msg = getTurn()
-        result = client.publish(topic, msg)
-        # result: [0, 1]
-        status = result[0]
-        if status == 0:
-            print(f"Send `{msg}` to topic `{topic}`")
-        else:
-            print(f"Failed to send message to topic {topic}")
-        
+def publish(client,msg):
+    time.sleep(0.0001)
+    # msg = getTurn()
+    result = client.publish(topic, msg)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{topic}`")
+    else:
+        print(f"Failed to send message to topic {topic}")
 
-
-def run():
+def Mqtt():
     client = connect_mqtt()
     client.loop_start()
-    publish(client)
-
-
-
-if __name__ == '__main__':
-    run()
+    return client
