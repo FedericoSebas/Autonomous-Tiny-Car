@@ -5,7 +5,7 @@ from paho.mqtt import client as mqtt_client
 
 broker = 'ip'
 port = 1883
-topic = "motor/data/turn"
+topic = "motor/autonomy/turn"
 # generate client ID with pub prefix randomly
 client_id = f'python-mqtt-{random.randint(0, 1000)}'
 #username = 'CERTERO-motor'
