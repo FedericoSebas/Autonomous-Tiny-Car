@@ -3,7 +3,7 @@ import time
 from paho.mqtt import client as mqtt_client
 
 
-broker = 'ip'
+broker = '192.168.0.101'
 port = 1883
 topic = "motor/autonomy/turn"
 # generate client ID with pub prefix randomly

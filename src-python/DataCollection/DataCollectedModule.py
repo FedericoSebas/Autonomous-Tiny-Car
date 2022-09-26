@@ -19,16 +19,19 @@ countFolder = 0
 count = 0
 imgList = []
 steeringList = []
+newPath = ""
 
 #GET CURRENT DIRECTORY PATH
 myDirectory = os.path.join(os.getcwd(), 'DataCollected')
 # print(myDirectory)
 
 # CREATE A NEW FOLDER BASED ON THE PREVIOUS FOLDER COUNT
-while os.path.exists(os.path.join(myDirectory,f'IMG{str(countFolder)}')):
-        countFolder += 1
-newPath = myDirectory +"/IMG"+str(countFolder)
-os.makedirs(newPath)
+def createFolder():
+    global countFolder, myDirectory, newPath
+    while os.path.exists(os.path.join(myDirectory,f'IMG{str(countFolder)}')):
+            countFolder += 1
+    newPath = myDirectory +"/IMG"+str(countFolder)
+    os.makedirs(newPath)
 
 # SAVE IMAGES IN THE FOLDER
 def saveData(img,steering):
@@ -59,4 +62,5 @@ if __name__ == '__main__':
         cv2.waitKey(1)
         cv2.imshow("Image", img)
     saveLog()
+
 

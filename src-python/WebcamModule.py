@@ -1,6 +1,6 @@
 import cv2
  
-cap = cv2.VideoCapture('video or webcam')
+cap = cv2.VideoCapture('http://192.168.0.100:8000/video')
  
 def getImg(size=[270,480]):
     _, img = cap.read()

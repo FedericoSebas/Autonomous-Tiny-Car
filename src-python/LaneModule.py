@@ -43,7 +43,7 @@ def getLaneCurve(img):
                 (w * x + int(curve//50 ), midY+10), (0, 0, 255), 2)
 
     # cv2.imshow('Thres',imgWarp)
-    cv2.imshow('Vid',imgResult)
+    # cv2.imshow('Vid',imgResult)
     # cv2.imshow('Hist',imgHist)
     
     curve = curve/100

@@ -1,11 +1,13 @@
 import random
 from paho.mqtt import client as mqtt_client
+from time import sleep
 
 
-broker = 'ip'
+broker = '192.168.0.102'
 port = 1883
-JoyLeft_TurnTopic = "motor/autonomy/left"
-JoyRight_MenuTopic = "motor/autonomy/right"
+JoyLeft_TurnTopic = "motor/rc/left"
+JoyRight_MenuTopic = "motor/rc/right"
+TurnTopic = "motor/rc/turn"
 Turn = []
 Menu = []
 # generate client ID with pub prefix randomly
@@ -34,18 +36,40 @@ def subscribe(client: mqtt_client):
     def on_message(client, userdata, msg):
         global Turn
         global Menu
-        if len(msg.JoyLeft_TurnTopic ) != 0:
-            print(f"Received `{msg.payload.decode()}` from `{msg.JoyLeft_TurnTopic }` JoyLeft_TurnTopic ")
-            Turn = msg.payload.decode().split()
-        if len(msg.JoyRight_MenuTopic) != 0:
-            print(f"Received `{msg.payload.decode()}` from `{msg.JoyRight_MenuTopic}` JoyRight_MenuTopic")
-            Menu = msg.payload.decode().split()
+        if msg.topic == JoyLeft_TurnTopic:
+             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` JoyLeft_TurnTopic ")
+             Turn = msg.payload.decode().split()
+        if msg.topic == JoyRight_MenuTopic:
+             print(f"Received `{msg.payload.decode()}` from `{msg.topic}` JoyRight_MenuTopic")
+             Menu = msg.payload.decode().split()
     client.subscribe(JoyLeft_TurnTopic )
     client.subscribe(JoyRight_MenuTopic)
     client.on_message = on_message
+    Turn = list(map(int,Turn))
+    Menu = list(map(int,Menu))
+    client.loop_start()
     return Turn,Menu
+
+def publish(client,msg):
+    sleep(0.0001)
+    # msg = getTurn()
+    result = client.publish(TurnTopic, msg)
+    # result: [0, 1]
+    status = result[0]
+    if status == 0:
+        print(f"Send `{msg}` to topic `{TurnTopic}`")
+    else:
+        print(f"Failed to send message to topic {TurnTopic}")
+
 
 def Mqtt():
     client = connect_mqtt()
-    client.loop_start()
     return client
+if __name__ == "__main__":
+    client = Mqtt()
+    while True:
+        subscribe(client)
+        if Turn or Menu:
+            print(Turn)
+            print(Menu)
+
