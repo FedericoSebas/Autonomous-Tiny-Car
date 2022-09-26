@@ -3,7 +3,7 @@ from paho.mqtt import client as mqtt_client
 from time import sleep
 
 
-broker = '192.168.0.102'
+broker = '192.168.10.160'
 port = 1883
 JoyLeft_TurnTopic = "motor/rc/left"
 JoyRight_MenuTopic = "motor/rc/right"
@@ -49,18 +49,6 @@ def subscribe(client: mqtt_client):
     Menu = list(map(int,Menu))
     client.loop_start()
     return Turn,Menu
-
-def publish(client,msg):
-    sleep(0.0001)
-    # msg = getTurn()
-    result = client.publish(TurnTopic, msg)
-    # result: [0, 1]
-    status = result[0]
-    if status == 0:
-        print(f"Send `{msg}` to topic `{TurnTopic}`")
-    else:
-        print(f"Failed to send message to topic {TurnTopic}")
-
 
 def Mqtt():
     client = connect_mqtt()

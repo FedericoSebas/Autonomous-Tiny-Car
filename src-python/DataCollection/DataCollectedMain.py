@@ -20,16 +20,13 @@ def Main(client):
         joyValLeft,joyValRight = mcM.subscribe(client)
         if joyValLeft and joyValLeft[0] >= 90 and joyValLeft[0] <= 270:
             axis = "left"
-            turn = joyValLeft[1] / -100
-            #mcM.publish(client,turn)    
+            turn = joyValLeft[1] / -100   
         if joyValLeft and joyValLeft[0] < 90 and joyValLeft[0] >= 0:
             axis = "right"
-            turn = joyValLeft[1] / 100
-            #mcM.publish(client,turn)    
+            turn = joyValLeft[1] / 100   
         if joyValLeft and joyValLeft[0] <= 360 and  joyValLeft[0] > 270:
             axis = "right"
-            turn = joyValLeft[1] / 100
-            #mcM.publish(client,turn)    
+            turn = joyValLeft[1] / 100 
         if record == 2 and joyValRight and joyValRight[0] > 0 and joyValRight[0] <= 180:
             dcM.createFolder()
             print('Recording Started ...')
