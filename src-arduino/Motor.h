@@ -45,6 +45,9 @@ class Motor{
 
 class Motors{
   private:
+    int maxSpeed = 255;
+    int minSpeed;
+    int factor;
     int leftSpeed,rightSpeed;
     Motor left;
     Motor right;
@@ -58,5 +61,5 @@ class Motors{
     void Stop();
     void Right();
     void Left();
-    void Move(double turn,int normal_speed,int t);
+    void Move(double turn,int normal_speed);
 };

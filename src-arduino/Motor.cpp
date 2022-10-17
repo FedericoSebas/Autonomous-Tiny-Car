@@ -18,11 +18,11 @@ void Motor::stop(){
   digitalWrite(pin_2,LOW);
 }
 
-void Motors::Right(){
+void Motors::Left(){
   left.backward();
   right.forward();
 }
-void Motors::Left(){
+void Motors::Right(){
   left.forward();
   right.backward();
 }
@@ -38,22 +38,23 @@ void Motors::Stop(){
   left.stop();
   right.stop();
 }
-void Motors::Move(double turn,int normal_speed,int t){
-  turn=int(round(turn*50));
+void Motors::Move(double turn,int normal_speed){
+  Motors twoMotors(left,right);
+  factor = maxSpeed - normal_speed;
+  turn=int(round(turn*factor));
+  minSpeed = normal_speed - factor;
   leftSpeed = normal_speed - turn;
   rightSpeed = normal_speed + turn;
-  if (leftSpeed > 255)leftSpeed = 255; 
-  else if(leftSpeed < 155)leftSpeed = 155;
-  if (rightSpeed > 255)rightSpeed = 255;
-  else if(rightSpeed < 155)rightSpeed = 155;
+  if (leftSpeed > maxSpeed)leftSpeed = maxSpeed; 
+  else if(leftSpeed < minSpeed)leftSpeed = minSpeed;
+  if (rightSpeed > maxSpeed)rightSpeed = maxSpeed;
+  else if(rightSpeed < minSpeed)rightSpeed = minSpeed;
   left.setSpeed(leftSpeed);
   right.setSpeed(rightSpeed);
-  left.forward();
-  right.forward();
-  /* if(leftSpeed > normal_speed)left.forward();
-  if(leftSpeed < normal_speed)left.backward();
-  if(rightSpeed > normal_speed )right.forward();
-  if(rightSpeed < normal_speed )right.backward(); */
-  delay(t);
+  if(leftSpeed > normal_speed)left.backward();
+  if(leftSpeed < normal_speed)left.forward();
+  if(rightSpeed > normal_speed )right.backward();
+  if(rightSpeed < normal_speed )right.forward();
+  if(leftSpeed == normal_speed && rightSpeed == normal_speed)twoMotors.Forward();
 }
 
