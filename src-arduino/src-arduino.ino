@@ -11,6 +11,7 @@
 #include <PubSubClient.h>
 #include "Motor.h"
 
+bool DEBUG = 1;
 
 /* This sketch is a extension/expansion/reork of the 'official' ESP32 Camera example
  *  sketch from Expressif:
@@ -630,36 +631,60 @@ void WifiSetup() {
     }
 }
 
+/* Main Code */
+
+
+// Used for simplify the number of array
 enum IncommingMessageMotors{
   DEG,
   SPD
 };
+
+String joyLeft[2] = {"",""};
+String joyRight[2] = {"",""};
+// 
+
+// Used for simplify the number of array
 enum ValuesMotors{
   LEFT,
   RIGHT
 };
-String incommingState;
-double turn = 0;
-String joyLeft[2] = {"",""};
-String joyRight[2] = {"",""};
 int speed[2];
-int rc_minSpeed = 154;
 int deg[2];
+// 
 
+// Speed of motors
+
+// Used in autonomy mode
+double turn = 0;
+// 
+
+// Declaration in void loop, boolean values
 int Forward[2];
 int Backward[2];
 bool Left;
 bool Right;
+// 
 
+// States of the car
 enum State{
   RC,
   AUTONOMY,
   RC_CONTROL
 };
 int state = RC;
+//
 
-int autonomy_speed = 205;
+int rc_minSpeed = 154;
 
+int autonomy_speed = 0;
+
+// MQTT messages received
+String incommingState;
+//
+
+// MQTT topics
+const char* topic_debug = "debug";
 const char* topic_state = "motor/state";
 const char*  topic_motor_autonomy_turn = "motor/autonomy/turn";
 const char*  topic_motor_rc_turn = "motor/autonomy/turn";
@@ -667,7 +692,9 @@ const char*  topic_motor_left = "motor/rc/left";
 const char*  topic_motor_right = "motor/rc/right";
 const char* topic_motor_rc_speed = "motor/rc/minspeed";
 const char* topic_motor_autonomy_speed = "motor/autonomy/speed";
+//
 
+// MQTT SERVERS
 enum MqttServers {
     localServer1,
     localServer2,
@@ -686,14 +713,17 @@ WiFiClient espClient3;
 PubSubClient client1(espClient1);
 PubSubClient client2(espClient2);
 PubSubClient client3(espClient3);
+//
 
-
+// Declaration of motors
 Motor leftMotor(12,13,3,4);
 Motor rightMotor(14,15,5,6);
 
 
 Motors twoMotors(leftMotor,rightMotor);
+//
 
+// Incomming massages
 void callback(char* topic, byte* payload, unsigned int length) {
   String incommingMessage = "";
   String Topic = String(topic);
@@ -705,6 +735,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   if(Topic == topic_motor_rc_turn){
     turn = incommingMessage.toDouble();
+  }
+  if(Topic == topic_debug){
+    if(incommingMessage.toInt() == 0 && DEBUG == 1) {
+        Serial.end();
+    }
   }
   if(Topic == topic_motor_left){
     joyLeft[DEG] = incommingMessage.substring(0,incommingMessage.indexOf(" "));
@@ -734,70 +769,87 @@ void callback(char* topic, byte* payload, unsigned int length) {
     autonomy_speed = incommingMessage.toInt();
   }
 }
+//
 
-int i = 0;
-int j = 0;
-int k = 0;
+// Reconnect functions, subscribe in a topic
+int counter[3] = {0,0,0};
 
-bool noConnected[3];
-void reconnect(){
-  while (noConnected[localServer1] || noConnected[localServer2] || noConnected[cloudServer])
+void reconnect1(){
+  while (!client1.connected() && counter[localServer1] <= 3)
   {
     Serial.print("Connecting MQTT...");
 
     if (client1.connect("CERTERO-MOTORS"))
     {
       Serial.println("Connected");
-      i = 0;
+      counter[localServer1] = 0;
+      
+      client1.subscribe(topic_debug);
       client1.subscribe(topic_motor_autonomy_turn);
       client1.subscribe(topic_motor_rc_turn);
       client1.subscribe(topic_motor_left);
       client1.subscribe(topic_motor_right);
       client1.subscribe(topic_state);
     }
-    else if(noConnected[localServer1])
+    else
     {
       Serial.print("Connection error");
       Serial.print(client1.state());
-      i++;
+      counter[localServer1]++;
       delay(2000);
     }
+  }
+}
+void reconnect2(){
+  while (!client2.connected() && counter[localServer2] <= 3)
+  {
     if (client2.connect("CERTERO-MOTORS"))
     {
       Serial.println("Connected");
-      j = 0;
+      counter[localServer2] = 0;
+      
+      client2.subscribe(topic_debug);
       client2.subscribe(topic_motor_autonomy_turn);
       client2.subscribe(topic_motor_rc_turn);
       client2.subscribe(topic_motor_left);
       client2.subscribe(topic_motor_right);
       client2.subscribe(topic_state);
     }
-    else if(noConnected[localServer2])
+    else
     {
       Serial.print("Connection error");
       Serial.print(client2.state());
-      j++;
+      counter[localServer2]++;
       delay(2000);
     }
+  }
+}
+void reconnect3(){
+  while (!client3.connected() && counter[cloudServer] <= 3)
+  {
     if (client3.connect("CERTERO-MOTORS",user[cloudServer],pass[cloudServer]))
     {
       Serial.println("Connected");
-      k = 0;
+      counter[cloudServer] = 0;
+      
+      client3.subscribe(topic_debug);
       client3.subscribe(topic_motor_autonomy_turn);
       client3.subscribe(topic_motor_rc_turn);
       client3.subscribe(topic_motor_left);
       client3.subscribe(topic_motor_right);
       client3.subscribe(topic_state);
     }
-    else if(noConnected[cloudServer])
+    else
     {
       Serial.print("Connection error");
       Serial.print(client3.state());
-      k++;
+      counter[cloudServer]++;
       delay(2000);
     }
   }
 }
+//
+/* END */
 
 void setup() {
     Serial.begin(115200);
@@ -975,14 +1027,13 @@ void setup() {
 }
 
 void loop() {
-    noConnected[localServer1]= !client1.connected() && i <= 50;
-    noConnected[localServer2]= !client2.connected() && j <= 50;
-    noConnected[cloudServer]= !client3.connected() && k <= 50;
-    if(noConnected[localServer1] || noConnected[localServer2] || noConnected[cloudServer])reconnect();
+    if(!client1.connected() && counter[localServer1] <= 3)reconnect1();
+    if(!client2.connected() && counter[localServer2] <= 3)reconnect2();
+    if(!client3.connected() && counter[cloudServer] <= 3)reconnect3();
 
-    if(noConnected[localServer1] || client1.connected())client1.loop();
-    if(noConnected[localServer2] || client2.connected())client2.loop();
-    if(noConnected[cloudServer] || client3.connected())client3.loop();
+    if(counter[localServer1] <= 3) client1.loop();
+    if(counter[localServer2] <= 3) client2.loop();
+    if(counter[cloudServer] <= 3) client3.loop();
 
     Forward[LEFT] = deg[LEFT] >= 0 && deg[LEFT] <= 180;
     Backward[LEFT] = deg[LEFT] >= 180 && deg[LEFT] <= 360;
