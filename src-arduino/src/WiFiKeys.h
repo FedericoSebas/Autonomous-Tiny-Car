@@ -1,0 +1,6 @@
+#define ssid "your_ssid"
+#define password "your_password"
+// #define ssid "your_ssid2"
+// #define password "your_password2"
+// #define ssid "your_ssid3"
+// #define password "your_password3"
