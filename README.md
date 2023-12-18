@@ -14,6 +14,10 @@ The main logic of the project is contained in two files:
 
 2. `./src-arduino/src/Motor.cpp` lines 40 to 87: This part of the code controls the movement of the car based on the curve data. It uses a PID system to adjust the car's speed and direction based on the curve of the path. After moving the motors, there is a microsecond delay before returning the curve and turn values.
 
+## Requirements
+
+If you want to upload the code to your ESP32CAM, you need to use PlatformIO and be in the ./src-arduino directory. Then, type `pio run` in the command line. This will download all the necessary libraries. After that, type `pio -t upload`, and it will upload the code to your ESP32CAM. If you are not comfortable with PlatformIO, you can extract the entire src-arduino folder and use it in Arduino. Please note that you might need to adjust the library paths in your code if you move it to a different location.
+
 ## Future Updates
 
 We are continuously working on improving this project. Stay tuned for future updates!
